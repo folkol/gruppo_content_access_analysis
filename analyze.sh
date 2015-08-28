@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 if [ -z "$1" ]
 then
     printf "usage: $0 catalina.out\n"
