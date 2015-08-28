@@ -6,10 +6,10 @@ then
     exit -1
 fi
 
-TASKS="hits misses lu_hits lu_misses"
+TASKS="hits_sum misses_sum lu_hits_sum lu_misses_sum hits_max misses_max lu_hits_max lu_misses_max"
 for TASK in $TASKS
 do
-    printf "Running task: '%s'\n" "$TASK"
+    printf "=== Running task: '%s' ===\n" "$TASK"
     ./${TASK}.sh $1 > ${TASK}.out
     head -3 ${TASK}.out
 done
