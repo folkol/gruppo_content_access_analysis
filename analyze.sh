@@ -33,7 +33,7 @@ lu_misses_sum() {
 }
 
 hits_max() {
-    analyze 5 'getContent=([0-9]+)' 'sum'
+    analyze 5 'getContent=([0-9]+)' 'max'
 }
 
 misses_max() {
