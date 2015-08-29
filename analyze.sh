@@ -1,15 +1,20 @@
-#!/bin/sh
+#!/bin/sh -e
 
+# Print usage
 if [ -z "$1" ]
 then
     printf "usage: $0 catalina.out\n"
     exit 2
 fi
 
-LOG_FILE=$1
+# Filter log on Nordebo's magic string
+printf "Filtering container log...\n"
+LOG_FILE=$(mktemp -t 'log_analyzer')
+grep 'INFO: Request URI:' $1 > $LOG_FILE
+
+# Core analysis functions
 analyze() {
     cat $LOG_FILE \
-        | grep 'INFO: Request URI:' \
         | awk "{ print \$$1, \$4 }" \
         | sed -E "s/$2/\1/g" \
         | q "select $3(c1), c2 from - group by c2" \
@@ -48,10 +53,16 @@ lu_misses_max() {
     analyze 8 '\(([0-9]+)\)' 'max'
 }
 
+# Main loop
+printf "Starting tasks:\n"
 TASKS='hits_sum misses_sum lu_hits_sum lu_misses_sum hits_max misses_max lu_hits_max lu_misses_max'
 for TASK in $TASKS
 do
-    printf "\n=== Running task: '%s' ===\n" "$TASK"
-    ${TASK} $1 > ${TASK}.out
-    head -3 ${TASK}.out
+    printf " * ${TASK}\n"
+    ${TASK} $1 > ${TASK}_analysis.out &
 done
+printf "Waiting for tasks to complete...\n"
+wait
+
+# Print top results
+head -3 *_analysis.out
