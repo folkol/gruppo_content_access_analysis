@@ -53,6 +53,5 @@ for TASK in $TASKS
 do
     printf "\n=== Running task: '%s' ===\n" "$TASK"
     ${TASK} $1 > ${TASK}.out
+    head -3 ${TASK}.out
 done
-
-head -5 *out
