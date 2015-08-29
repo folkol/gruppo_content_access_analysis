@@ -3,7 +3,7 @@
 if [ -z "$1" ]
 then
     printf "usage: $0 catalina.out\n"
-    exit -1
+    exit 2
 fi
 
 LOG_FILE=$1
